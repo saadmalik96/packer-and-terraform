@@ -2,8 +2,6 @@
 
 This repository automates the creation of an Amazon Machine Image (AMI) with Docker installed using **Packer**, and then provisions a VPC with EC2 instances using **Terraform**.
 
----
-
 ## 📦 What This Sets Up
 
 1. **Custom AMI (Amazon Linux 2)**  
@@ -22,8 +20,6 @@ This repository automates the creation of an Amazon Machine Image (AMI) with Doc
    - **1 Bastion Host** (public subnet, SSH access from your IP)  
    - **6 Private EC2 Instances** (private subnets, accessible via Bastion)  
    - All use the Docker-enabled AMI built with Packer
-
----
 
 ## 🚀 Setup Instructions
 
@@ -65,8 +61,6 @@ What this does:
   - 6 private EC2 instances
 - Cleans up temporary files
 
----
-
 ## 🔐 SSH Access: Bastion and Private EC2
 
 To connect to your private EC2 instances through the Bastion host using `ssh-agent`:
@@ -100,7 +94,6 @@ ssh ec2-user@<private-ec2-ip>
 **Private EC2 via Bastion**  
 ![Private EC2 Login](screenshots/private-ec2.png)
 
----
 
 ## ✅ Prerequisites
 
@@ -110,8 +103,6 @@ ssh ec2-user@<private-ec2-ip>
 - Existing EC2 Key Pair in AWS (`eg. awskey`) or whatever you have.
 - SSH private key file locally (`eg. ~/.ssh/awskey.pem`) or whatever your path is.
 
----
-
 ## 🧹 Cleanup
 
 To destroy the infrastructure:
@@ -119,5 +110,3 @@ To destroy the infrastructure:
 ```bash
 terraform destroy -auto-approve
 ```
-
----
