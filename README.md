@@ -26,8 +26,8 @@ This repository automates the creation of an Amazon Machine Image (AMI) with Doc
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repo-url>
-cd <repo>
+git clone git@github.com:saadmalik96/packer-and-terraform.git
+cd packer-and-terraform
 ```
 
 ### 2. Export Required Packer Variables
