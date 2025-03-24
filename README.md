@@ -110,3 +110,6 @@ To destroy the infrastructure:
 ```bash
 terraform destroy -auto-approve
 ```
+
+**Terraform Destroyed**  
+![Private EC2 Login](screenshots/destroy.png)
