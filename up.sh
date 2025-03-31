@@ -12,9 +12,6 @@ packer build \
 sed -n 's/^.*ubuntu.amazon-ebs.ubuntu: AMI: \(ami-[a-zA-Z0-9]*\).*$/\1/p' packer_output.txt > ubuntu_ami_id.txt
 sed -n 's/^.*amazon-linux.amazon-ebs.amazon_linux: AMI: \(ami-[a-zA-Z0-9]*\).*$/\1/p' packer_output.txt > amazon_ami_id.txt
 
-# Get your IP for SG rule
-export TF_VAR_my_ip="$(curl -s https://checkip.amazonaws.com)/32"
-
 # Run Terraform
 terraform init
 terraform apply -auto-approve
