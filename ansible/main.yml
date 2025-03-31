@@ -1,0 +1,35 @@
+---
+- name: Update, verify Docker, and check disk usage
+  hosts: ubuntu_instances:amazon_instances:ansible_controller
+  become: true
+
+  tasks:
+    - name: Update and upgrade packages (Ubuntu)
+      apt:
+        update_cache: yes
+        upgrade: dist
+      when: ansible_os_family == "Debian"
+
+    - name: Update and upgrade packages (Amazon Linux)
+      yum:
+        name: '*'
+        state: latest
+      when: ansible_os_family == "RedHat"
+
+    - name: Check Docker version
+      shell: docker --version
+      register: docker_version
+      ignore_errors: true
+
+    - name: Print Docker version
+      debug:
+        msg: "Docker version on {{ inventory_hostname }}: {{ docker_version.stdout }}"
+
+    - name: Report disk usage
+      shell: df -h /
+      register: disk_usage
+
+    - name: Print disk usage
+      debug:
+        msg: "Disk usage on {{ inventory_hostname }}:\n{{ disk_usage.stdout }}"
+      

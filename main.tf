@@ -2,8 +2,12 @@ provider "aws" {
   region = var.region
 }
 
-data "external" "ami" {
-  program = ["bash", "-c", "echo '{\"ami_id\":\"'$(cat ami_id.txt)'\"}'"]
+data "external" "ubuntu_ami" {
+  program = ["bash", "-c", "echo '{\"ami_id\":\"'$(cat ubuntu_ami_id.txt)'\"}'"]
+}
+
+data "external" "amazon_ami" {
+  program = ["bash", "-c", "echo '{\"ami_id\":\"'$(cat amazon_ami_id.txt)'\"}'"]
 }
 
 # VPC Module (Public Module)
@@ -54,22 +58,53 @@ module "private_sg" {
   egress_rules = ["all-all"]
 }
 
-# Bastion Host (public subnet)
+resource "aws_instance" "ubuntu_instances" {
+  count                  = 3
+  ami                    = data.external.ubuntu_ami.result.ami_id
+  instance_type          = "t2.micro"
+  subnet_id              = module.vpc.private_subnets[count.index % length(module.vpc.private_subnets)]
+  vpc_security_group_ids = [module.private_sg.security_group_id]
+  key_name               = var.keypair_name
+
+  tags = {
+    OS = "ubuntu"
+  }
+}
+
+resource "aws_instance" "amazon_instances" {
+  count                  = 3
+  ami                    = data.external.amazon_ami.result.ami_id
+  instance_type          = "t2.micro"
+  subnet_id              = module.vpc.private_subnets[count.index % length(module.vpc.private_subnets)]
+  vpc_security_group_ids = [module.private_sg.security_group_id]
+  key_name               = var.keypair_name
+
+  tags = {
+    OS = "amazon"
+  }
+}
+
+resource "aws_instance" "ansible_controller" {
+  ami                    = data.external.ubuntu_ami.result.ami_id
+  instance_type          = "t2.micro"
+  subnet_id              = module.vpc.private_subnets[0]
+  vpc_security_group_ids = [module.private_sg.security_group_id]
+  key_name               = var.keypair_name
+
+  tags = {
+    Role = "ansible-controller"
+  }
+}
+
 resource "aws_instance" "bastion" {
-  ami                         = data.external.ami.result.ami_id
+  ami                         = data.external.amazon_ami.result.ami_id
   instance_type               = "t2.micro"
   subnet_id                   = module.vpc.public_subnets[0]
   vpc_security_group_ids      = [module.bastion_sg.security_group_id]
   associate_public_ip_address = true
   key_name                    = var.keypair_name
-}
 
-# Private EC2 Instances using your custom AMI
-resource "aws_instance" "private_instances" {
-  count                  = 6
-  ami                    = data.external.ami.result.ami_id
-  instance_type          = "t2.micro"
-  subnet_id              = module.vpc.private_subnets[count.index % length(module.vpc.private_subnets)]
-  vpc_security_group_ids = [module.private_sg.security_group_id]
-  key_name               = var.keypair_name
+  tags = {
+    Name = "bastion"
+  }
 }

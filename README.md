@@ -35,6 +35,7 @@ cd packer-and-terraform
 ```bash
 export SSH_KEY_NAME=awskey
 export SSH_KEY_PATH=~/.ssh/awskey.pem
+export TF_VAR_my_ip="$(curl -s https://checkip.amazonaws.com)/32"
 
 export PACKER_VAR_ssh_keypair_name=$SSH_KEY_NAME
 export PACKER_VAR_ssh_private_key_file=$SSH_KEY_PATH
@@ -94,6 +95,22 @@ ssh ec2-user@<private-ec2-ip>
 **Private EC2 via Bastion**  
 ![Private EC2 Login](screenshots/private-ec2.png)
 
+## 🧠 Ansible: Configuration Management
+
+After Terraform provisions infrastructure, the script:
+
+- Copies your private key to the Ansible controller (via Bastion)
+- Transfers `hosts.ini` and `main.yml` into the controller
+- Installs Ansible and runs the playbook automatically
+
+You can re-run the playbook manually from the controller:
+
+```bash
+ansible-playbook -i hosts.ini main.yml
+```
+
+**Ansible Playbook**  
+![Private EC2 Login](screenshots/ansible_output.png)
 
 ## ✅ Prerequisites
 
